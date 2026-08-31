@@ -57,6 +57,7 @@ function simple_crm_init() {
 	new \Simple_CRM\Class_CRM_Export();
 	new \Simple_CRM\Class_CRM_Emails();
 	new \Simple_CRM\Class_CRM_Lark();
+	new \Simple_CRM\Class_CRM_Lark_Settings();
 	new \Simple_CRM\Class_CRM_Kanban();
 }
 add_action( 'plugins_loaded', 'simple_crm_init' );

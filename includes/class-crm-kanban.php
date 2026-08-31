@@ -9,6 +9,7 @@ class Class_CRM_Kanban {
 		add_action( 'admin_menu', [ $this, 'add_kanban_page' ] );
 		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_kanban_assets' ] );
 		add_action( 'wp_ajax_simple_crm_update_deal_stage', [ $this, 'ajax_update_deal_stage' ] );
+		add_action( 'admin_post_simple_crm_new_deal', [ $this, 'handle_new_deal' ] );
 	}
 
 	public function add_kanban_page() {
@@ -32,6 +33,76 @@ class Class_CRM_Kanban {
 		<div class="wrap">
 			<h1>Deals Kanban</h1>
 			<p>Drag deals between stages. Changes are saved automatically.</p>
+
+			<h2>New Deal</h2>
+			<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>"
+			      style="max-width:600px; margin-bottom:20px;">
+				<?php wp_nonce_field( 'simple_crm_new_deal_nonce', 'simple_crm_new_deal_nonce' ); ?>
+				<input type="hidden" name="action" value="simple_crm_new_deal">
+
+				<p>
+					<label for="deal_title">Deal Title</label><br>
+					<input type="text" name="deal_title" id="deal_title" required class="regular-text">
+				</p>
+				<p>
+					<label for="deal_value">Value (€)</label><br>
+					<input type="number" step="0.01" name="deal_value" id="deal_value"
+					       class="regular-text" value="0">
+				</p>
+				<p>
+					<label for="deal_stage">Stage</label><br>
+					<select name="deal_stage" id="deal_stage">
+						<?php foreach ( $stages as $key => $label ) : ?>
+							<option value="<?php echo esc_attr( $key ); ?>" <?php selected( $key, 'lead' ); ?>>
+								<?php echo esc_html( $label ); ?>
+							</option>
+						<?php endforeach; ?>
+					</select>
+				</p>
+				<p>
+					<label for="deal_contact">Contact (optional)</label><br>
+					<select name="deal_contact" id="deal_contact">
+						<option value="">— None —</option>
+						<?php
+						$contacts = get_posts( [
+							'post_type'      => 'crm_contact',
+							'post_status'    => 'any',
+							'posts_per_page' => -1,
+							'fields'         => 'ids',
+						] );
+						foreach ( $contacts as $cid ) :
+							$title = get_the_title( $cid );
+							?>
+							<option value="<?php echo (int) $cid; ?>">
+								<?php echo esc_html( $title ); ?>
+							</option>
+						<?php endforeach; ?>
+					</select>
+				</p>
+				<p>
+					<label for="deal_company">Company (optional)</label><br>
+					<select name="deal_company" id="deal_company">
+						<option value="">— None —</option>
+						<?php
+						$companies = get_posts( [
+							'post_type'      => 'crm_company',
+							'post_status'    => 'any',
+							'posts_per_page' => -1,
+							'fields'         => 'ids',
+						] );
+						foreach ( $companies as $cid ) :
+							$title = get_the_title( $cid );
+							?>
+							<option value="<?php echo (int) $cid; ?>">
+								<?php echo esc_html( $title ); ?>
+							</option>
+						<?php endforeach; ?>
+					</select>
+				</p>
+				<p>
+					<?php submit_button( 'Create Deal', 'primary', 'submit_new_deal' ); ?>
+				</p>
+			</form>
 
 			<div id="simple-crm-kanban-board" style="display:flex; gap:12px; overflow-x:auto; padding-bottom:12px;">
 				<?php foreach ( $stages as $stage_key => $stage_label ) : ?>
@@ -177,5 +248,58 @@ class Class_CRM_Kanban {
 		update_post_meta( $deal_id, 'crm_stage', $stage );
 
 		wp_send_json_success( [ 'message' => 'Stage updated' ] );
+	}
+
+	public function handle_new_deal() {
+		if ( ! current_user_can( 'edit_posts' ) ) {
+			wp_die( 'Unauthorized' );
+		}
+
+		if ( ! isset( $_POST['simple_crm_new_deal_nonce'] ) ||
+		     ! wp_verify_nonce( $_POST['simple_crm_new_deal_nonce'], 'simple_crm_new_deal_nonce' ) ) {
+			wp_die( 'Invalid nonce' );
+		}
+
+		$title       = sanitize_text_field( $_POST['deal_title'] ?? '' );
+		$value       = floatval( $_POST['deal_value'] ?? 0 );
+		$stage       = sanitize_text_field( $_POST['deal_stage'] ?? 'lead' );
+		$contact_id  = absint( $_POST['deal_contact'] ?? 0 );
+		$company_id  = absint( $_POST['deal_company'] ?? 0 );
+
+		if ( ! $title ) {
+			wp_die( 'Title is required' );
+		}
+
+		$valid_stages = array_keys( simple_crm_get_deal_stages() );
+		if ( ! in_array( $stage, $valid_stages, true ) ) {
+			$stage = 'lead';
+		}
+
+		$deal_id = wp_insert_post( [
+			'post_type'   => 'crm_deal',
+			'post_title'  => $title,
+			'post_status' => 'publish',
+		] );
+
+		if ( is_wp_error( $deal_id ) ) {
+			wp_die( 'Could not create deal' );
+		}
+
+		update_post_meta( $deal_id, 'crm_value', $value );
+		update_post_meta( $deal_id, 'crm_stage', $stage );
+		update_post_meta( $deal_id, 'crm_contact_id', $contact_id );
+		update_post_meta( $deal_id, 'crm_company_id', $company_id );
+
+		// Trigger Lark sync
+		do_action( 'simple_crm_deal_saved', $deal_id, [
+			'title'        => $title,
+			'value'        => $value,
+			'stage'        => $stage,
+			'contact_name' => $contact_id ? get_the_title( $contact_id ) : '',
+			'company'      => $company_id ? get_the_title( $company_id ) : '',
+		] );
+
+		wp_safe_redirect( admin_url( 'admin.php?page=simple-crm-kanban&deal_created=1' ) );
+		exit;
 	}
 }
