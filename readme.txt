@@ -1,5 +1,5 @@
 === Simple CRM ===
-Contributors: Richard McGrath/FourZero.work
+Contributors: riku45100
 Tags: crm, contacts, deals, pipeline, elementor, lark, kanban, leads, sales
 Requires at least: 6.0
 Tested up to: 6.7
@@ -16,28 +16,20 @@ Simple CRM is a lightweight, self-hosted CRM built as a WordPress plugin. Manage
 
 = Features =
 
-- **Contacts, Companies, Deals, Activities** – Custom post types for your CRM data.
-- **Elementor Pro integration** – Automatically create contacts and deals from Elementor forms.
-- **Kanban pipeline** – Visual deal board with stages: Lead, Qualified, Proposal, Won, Lost.
-- **Export to CSV** – Export contacts, companies, deals, and activities.
-- **Email from CRM** – Send emails to contacts and log them as activities.
-- **Lark Base sync** – Push contacts and deals to a Lark Base “CRM” table.
-
-Use it as your main CRM or as a front-end for Lark, Airtable, or other tools.
-
-= Who is this for? =
-
-- Small businesses and freelancers who want a self-hosted CRM.
-- Agencies managing leads and deals inside WordPress.
-- Teams already using Lark Base and wanting WordPress as a front-end.
+* Contacts, Companies, Deals, Activities – Custom post types for your CRM data.
+* Elementor Pro integration – Automatically create contacts and deals from Elementor forms.
+* Kanban pipeline – Visual deal board with stages: Lead, Qualified, Proposal, Won, Lost.
+* Export to CSV – Export contacts, companies, deals, and activities.
+* Email from CRM – Send emails to contacts and log them as activities.
+* Lark Base sync – Push contacts and deals to a Lark Base "CRM" table.
 
 == Installation ==
 
 1. Upload the `simple-crm` folder to `/wp-content/plugins/`.
-2. Activate the plugin through the **Plugins** menu in WordPress.
-3. Go to **CRM** in the admin menu to start adding contacts and deals.
-4. (Optional) Configure Lark Base under **CRM → Lark Settings**.
-5. (Optional) Connect your Elementor forms named “Contact Form” and “Deal Request Form”.
+2. Activate the plugin through the Plugins menu in WordPress.
+3. Go to CRM in the admin menu to start adding contacts and deals.
+4. Optionally configure Lark Base under CRM > Lark Settings.
+5. Optionally connect Elementor forms named "Contact Form" and "Deal Request Form".
 
 == Frequently Asked Questions ==
 
@@ -51,11 +43,11 @@ You can use Simple CRM as a lightweight front-end and sync everything to Lark Ba
 
 = Is my data exported easily? =
 
-Yes. Go to **CRM → Export** to download CSV files for contacts, companies, deals, and activities.
+Yes. Go to CRM > Export to download CSV files for contacts, companies, deals, and activities.
 
 = Can I customize the pipeline stages? =
 
-Currently the stages are hard-coded: Lead, Qualified, Proposal, Won, Lost. You can change them in the code via `simple_crm_get_deal_stages()`.
+Currently the stages are Lead, Qualified, Proposal, Won, and Lost. Developers can change them through the `simple_crm_get_deal_stages()` function.
 
 == Screenshots ==
 
@@ -68,9 +60,8 @@ Currently the stages are hard-coded: Lead, Qualified, Proposal, Won, Lost. You c
 
 = 0.1.0 =
 * Initial release.
-* Contacts, Companies, Deals, Activities CPTs.
+* Contacts, companies, deals, and activities.
 * Elementor Pro form integration.
-* Kanban deal pipeline (Lead, Qualified, Proposal, Won, Lost).
-* CSV export for all entities.
-* Send email to contacts from admin.
+* Kanban deal pipeline.
+* CSV export and contact email.
 * Lark Base sync for contacts and deals.
