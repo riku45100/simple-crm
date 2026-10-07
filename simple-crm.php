@@ -3,7 +3,9 @@
  * Plugin Name: Simple CRM
  * Description: Custom WordPress CRM plugin with Elementor integration, Lark Base sync, Kanban pipeline, exports, and email.
  * Version: 0.1.0
- * Author: Richard McGrath / FourZero
+ * Author: Richard McGrath/FourZero.work
+ * License: GPLv2 or later
+ * License URI: https://www.gnu.org/licenses/gpl-2.0.html
  * Requires at least: 6.0
  * Requires PHP: 7.4
  */
@@ -13,6 +15,12 @@ defined( 'ABSPATH' ) || exit;
 define( 'SIMPLE_CRM_VERSION', '0.1.0' );
 define( 'SIMPLE_CRM_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'SIMPLE_CRM_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
+
+// Load text domain
+function simple_crm_load_textdomain() {
+	load_plugin_textdomain( 'simple-crm', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
+}
+add_action( 'plugins_loaded', 'simple_crm_load_textdomain' );
 
 // Autoload includes (simple manual autoload)
 spl_autoload_register(
@@ -36,11 +44,11 @@ spl_autoload_register(
 // Stages helper
 function simple_crm_get_deal_stages() {
 	return [
-		'lead'      => 'Lead',
-		'qualified' => 'Qualified',
-		'proposal'  => 'Proposal',
-		'won'       => 'Won',
-		'lost'      => 'Lost',
+		'lead'      => __( 'Lead', 'simple-crm' ),
+		'qualified' => __( 'Qualified', 'simple-crm' ),
+		'proposal'  => __( 'Proposal', 'simple-crm' ),
+		'won'       => __( 'Won', 'simple-crm' ),
+		'lost'      => __( 'Lost', 'simple-crm' ),
 	];
 }
 
