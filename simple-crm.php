@@ -3,7 +3,7 @@
  * Plugin Name: Simple CRM
  * Description: Custom WordPress CRM plugin with Elementor integration, Lark Base sync, Kanban pipeline, exports, and email.
  * Version: 0.1.0
- * Author: Your Name
+ * Author: Richard McGrath / FourZero
  * Requires at least: 6.0
  * Requires PHP: 7.4
  */
