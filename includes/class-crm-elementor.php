@@ -1,4 +1,11 @@
 <?php
+/**
+ * Elementor Pro forms integration.
+ *
+ * @package Simple_CRM
+ * @since 0.1.0
+ */
+
 namespace Simple_CRM;
 
 defined( 'ABSPATH' ) || exit;
@@ -85,23 +92,23 @@ class Class_CRM_Elementor {
 			$deal_title .= ' - ' . $company;
 		}
 
-		// Map stage from form if present
+		// Map stage from form if present.
 		$stage_raw = $this->get_field_value( $record, 'stage' );
 		$stage_map = [
-			'Lead'        => 'lead',
-			'Qualified'   => 'qualified',
-			'Proposal'    => 'proposal',
-			'Won'         => 'won',
-			'Lost'        => 'lost',
+			'Lead'      => 'lead',
+			'Qualified' => 'qualified',
+			'Proposal'  => 'proposal',
+			'Won'       => 'won',
+			'Lost'      => 'lost',
 		];
 		$stage = $stage_map[ $stage_raw ] ?? 'lead';
 
 		$deal_id = $this->create_deal( [
-			'title'        => $deal_title ?: 'Deal',
-			'contact_id'   => $contact_id,
-			'company_id'   => $company_id,
-			'value'        => floatval( $budget ),
-			'stage'        => $stage,
+			'title'      => $deal_title ?: 'Deal',
+			'contact_id' => $contact_id,
+			'company_id' => $company_id,
+			'value'      => floatval( $budget ),
+			'stage'      => $stage,
 		] );
 
 		if ( $deal_id ) {
@@ -235,10 +242,10 @@ class Class_CRM_Elementor {
 		}
 
 		$post_id = wp_insert_post( [
-			'post_type'   => 'crm_activity',
-			'post_title'  => $type . ' - ' . current_time( 'mysql' ),
-			'post_content'=> $message,
-			'post_status' => 'publish',
+			'post_type'    => 'crm_activity',
+			'post_title'   => $type . ' - ' . current_time( 'mysql' ),
+			'post_content' => $message,
+			'post_status'  => 'publish',
 		] );
 
 		if ( is_wp_error( $post_id ) ) {

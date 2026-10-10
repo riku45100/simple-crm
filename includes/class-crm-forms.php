@@ -1,4 +1,11 @@
 <?php
+/**
+ * Basic front-end contact form shortcode.
+ *
+ * @package Simple_CRM
+ * @since 0.1.0
+ */
+
 namespace Simple_CRM;
 
 defined( 'ABSPATH' ) || exit;

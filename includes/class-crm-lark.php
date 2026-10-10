@@ -1,4 +1,11 @@
 <?php
+/**
+ * Lark Base (Bitable) integration for contacts and deals.
+ *
+ * @package Simple_CRM
+ * @since 0.1.0
+ */
+
 namespace Simple_CRM;
 
 defined( 'ABSPATH' ) || exit;
@@ -41,7 +48,7 @@ class Class_CRM_Lark {
 			return false;
 		}
 
-		$body = json_decode( wp_remote_retrieve_body( $response ), true );
+		$body  = json_decode( wp_remote_retrieve_body( $response ), true );
 		$token = $body['tenant_access_token'] ?? false;
 
 		if ( ! $token ) {
@@ -189,7 +196,7 @@ class Class_CRM_Lark {
 			return false;
 		}
 
-		$body = json_decode( wp_remote_retrieve_body( $response ), true );
+		$body  = json_decode( wp_remote_retrieve_body( $response ), true );
 		$items = $body['data']['items'] ?? [];
 
 		if ( empty( $items ) ) {
